@@ -1,0 +1,26 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  Chart as ChartJS,
+  CategoryScale, LinearScale, RadialLinearScale, BarElement, LineElement,
+  PointElement, ArcElement, Tooltip, Legend, Filler,
+} from 'chart.js'
+import AnnotationPlugin from 'chartjs-plugin-annotation'
+import App from './App.jsx'
+import './index.css'
+
+ChartJS.register(
+  CategoryScale, LinearScale, RadialLinearScale, BarElement, LineElement,
+  PointElement, ArcElement, Tooltip, Legend, Filler, AnnotationPlugin,
+)
+
+const queryClient = new QueryClient({
+  defaultOptions: { queries: { staleTime: Infinity, retry: 1 } },
+})
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <QueryClientProvider client={queryClient}>
+    <App />
+  </QueryClientProvider>
+)
