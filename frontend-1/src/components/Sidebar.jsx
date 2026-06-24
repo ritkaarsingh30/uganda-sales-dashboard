@@ -7,9 +7,9 @@ const REPORT_TABS = [
   { key: 'act',  label: 'Activities' },
 ]
 
-export default function Sidebar({ activeTab, onTabChange, availableMonths = [], collapsed, onToggleCollapsed }) {
+export default function Sidebar({ activeTab, onTabChange, availableMonths = [], collapsed, onToggleCollapsed, mobileOpen }) {
   return (
-    <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
+    <aside className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'mobile-open' : ''}`}>
       <div className="brand">
         <div className="brand-mark">U</div>
         <div className="brand-text">

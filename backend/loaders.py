@@ -53,7 +53,7 @@ def _find_root_file(storage, kind: str) -> bytes | None:
     try:
         root = storage.root
         for entry in os.scandir(root):
-            if entry.is_file() and entry.name.endswith(".xlsx"):
+            if entry.is_file() and entry.name.endswith(".xlsx") and not entry.name.startswith("~$"):
                 name_lower = entry.name.lower()
                 if kind == "sales" and ("sale" in name_lower):
                     return storage.get_file_bytes(entry.name)
@@ -74,6 +74,8 @@ def _find_month_file(storage, folder: str, kind: str) -> bytes | None:
     patterns = kind_patterns.get(kind, [kind])
     try:
         for fname in storage.list_files(folder):
+            if fname.startswith("~$"):
+                continue
             fname_lower = fname.lower()
             if fname_lower.endswith(".xlsx") and any(p in fname_lower for p in patterns):
                 return storage.get_file_bytes(f"{folder}/{fname}")

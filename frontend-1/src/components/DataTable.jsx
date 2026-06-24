@@ -41,7 +41,8 @@ export default function DataTable({ title, sub, badge, borderColor, columns = []
         </div>
         {badge && <span className="badge n">{badge}</span>}
       </div>
-      <table>
+      <div className="tbl-scroll">
+<table>
         <thead>
           <tr>{columns.map(c => <th key={c.key} style={c.align ? { textAlign: c.align } : undefined}>{c.label}</th>)}</tr>
         </thead>
@@ -64,6 +65,7 @@ export default function DataTable({ title, sub, badge, borderColor, columns = []
           )}
         </tbody>
       </table>
+</div>
     </div>
   )
 }

@@ -28,6 +28,7 @@ function Dashboard() {
   const { data: availableMonths = [] } = useAvailableMonths()
   const [activeTab, setActiveTab] = useState('ov')
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileNavOpen, setMobileNavOpen] = useState(false)
 
   const staticPanels = {
     ov:   <OverviewTab    />,
@@ -54,13 +55,18 @@ function Dashboard() {
       <div className="shell">
         <Sidebar
           activeTab={activeTab}
-          onTabChange={setActiveTab}
+          onTabChange={(tab) => { setActiveTab(tab); setMobileNavOpen(false) }}
           availableMonths={availableMonths}
           collapsed={collapsed}
           onToggleCollapsed={() => setCollapsed(c => !c)}
+          mobileOpen={mobileNavOpen}
         />
+        {mobileNavOpen && <div className="sidebar-overlay" onClick={() => setMobileNavOpen(false)} />}
         <div className="main">
           <div className="topbar">
+            <button className="mobile-nav-toggle" onClick={() => setMobileNavOpen(o => !o)} aria-label="Toggle navigation">
+              ☰
+            </button>
             <div>
               <div className="topbar-title">{heading.title}</div>
               <div className="topbar-sub">{heading.sub}</div>

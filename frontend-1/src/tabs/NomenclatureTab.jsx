@@ -45,7 +45,8 @@ export default function NomenclatureTab() {
     <div>
       <SectionLabel tag="TEAM ROSTER" text="Medical Representatives" />
       <div className="tbl-card" style={{ marginBottom: 20 }}>
-        <table>
+        <div className="tbl-scroll">
+<table>
           <thead>
             <tr><th>MR ID</th><th>Name</th><th>Territory</th></tr>
           </thead>
@@ -59,11 +60,13 @@ export default function NomenclatureTab() {
             ))}
           </tbody>
         </table>
+</div>
       </div>
 
       <SectionLabel tag="PRODUCT PORTFOLIO" text="21 Products (All Tablets)" />
       <div className="tbl-card" style={{ marginBottom: 20 }}>
-        <table>
+        <div className="tbl-scroll">
+<table>
           <thead>
             <tr><th>Product ID</th><th>Name</th><th>Category</th><th>Rate (EUR)</th></tr>
           </thead>
@@ -78,11 +81,13 @@ export default function NomenclatureTab() {
             ))}
           </tbody>
         </table>
+</div>
       </div>
 
       <SectionLabel tag="TERRITORIES" text="Sales Zones" />
       <div className="tbl-card" style={{ marginBottom: 20 }}>
-        <table>
+        <div className="tbl-scroll">
+<table>
           <thead>
             <tr><th>Zone ID</th><th>Name</th></tr>
           </thead>
@@ -95,6 +100,7 @@ export default function NomenclatureTab() {
             ))}
           </tbody>
         </table>
+</div>
       </div>
 
       <SectionLabel tag="CURRENCY" text="Conversion Reference" />

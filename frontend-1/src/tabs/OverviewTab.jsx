@@ -174,7 +174,8 @@ export default function OverviewTab() {
       <SectionLabel tag="MONTH SUMMARY" style={{ marginTop: 20 }} />
       {visibleMonths.length > 0 && (
         <div className="tbl-card">
-          <table>
+          <div className="tbl-scroll">
+<table>
             <thead>
               <tr>
                 <th>Month</th><th>Sales (EUR)</th><th>Target (EUR)</th><th>Achievement</th>
@@ -205,6 +206,7 @@ export default function OverviewTab() {
               ))}
             </tbody>
           </table>
+</div>
         </div>
       )}
     </div>

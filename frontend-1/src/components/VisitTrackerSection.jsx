@@ -68,7 +68,8 @@ function ByDayView({ visits }) {
         <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{filtered.length} doctor{filtered.length !== 1 ? 's' : ''} visited</span>
       </div>
       {filtered.length > 0 ? (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="tbl-scroll">
+<table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr><TH>Doctor</TH><TH>Speciality</TH><TH>Hospital / Clinic</TH><TH>Status</TH></tr>
           </thead>
@@ -83,6 +84,7 @@ function ByDayView({ visits }) {
             ))}
           </tbody>
         </table>
+</div>
       ) : (
         <div style={{ padding: '12px 16px', color: 'var(--muted)', fontSize: '0.8rem' }}>No visits on this date.</div>
       )}
@@ -121,7 +123,8 @@ function MostVisitedView({ visits }) {
   const max = ranked[0]?.count || 1
 
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <div className="tbl-scroll">
+<table style={{ width: '100%', borderCollapse: 'collapse' }}>
       <thead>
         <tr><TH>Rank</TH><TH>Doctor</TH><TH>Speciality</TH><TH>Clinic</TH><TH>Status</TH><TH>Visits</TH><TH>Dates</TH></tr>
       </thead>
@@ -146,6 +149,7 @@ function MostVisitedView({ visits }) {
         ))}
       </tbody>
     </table>
+</div>
   )
 }
 

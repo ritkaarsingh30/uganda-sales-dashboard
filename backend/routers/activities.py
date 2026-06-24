@@ -25,6 +25,70 @@ def _doc_words(s):
     return set(_norm_doc(s).split())
 
 
+HOSPITAL_STOPWORDS = {
+    'hospital', 'referral', 'rrh', 'national', 'specialist', 'medical',
+    'clinic', 'center', 'centre', 'regional', 'general',
+}
+
+
+def _norm_hospital(s):
+    s = str(s).lower().strip()
+    s = _re.sub(r'[^a-z\s]', ' ', s)
+    words = [w for w in s.split() if w and w not in HOSPITAL_STOPWORDS]
+    return ' '.join(words)
+
+
+def _hosp_match(p, a):
+    p, a = str(p or '').strip(), str(a or '').strip()
+    if not p or not a:
+        return None
+    np, na = _norm_hospital(p), _norm_hospital(a)
+    if not np or not na:
+        return None
+    if np == na:
+        return True
+    pw, aw = set(np.split()), set(na.split())
+    if any(len(w) >= 4 for w in pw & aw):
+        return True
+    return fuzz.ratio(np, na) >= 60
+
+
+SPECIALITY_GROUPS = {
+    'phy': 'physician', 'physician': 'physician',
+    'nephr': 'nephrology', 'nephro': 'nephrology', 'nephrologist': 'nephrology',
+    'neuro': 'neurology', 'neurologist': 'neurology',
+    'neurosurgeon': 'neurosurgery', 'neurosurgery': 'neurosurgery',
+    'uro': 'urology', 'urologist': 'urology',
+    'ortho': 'orthopedics', 'orthopedic': 'orthopedics', 'orthopaedic': 'orthopedics',
+    'gp': 'general practice',
+    'mo': 'medical officer',
+    'sho': 'senior house officer',
+    'pharmacist': 'pharmacist',
+}
+
+
+def _spec_group(s):
+    s = str(s or '').strip().lower()
+    s = _re.sub(r'[^a-z\s]', '', s)
+    return SPECIALITY_GROUPS.get(s, s)
+
+
+def _spec_match(p, a):
+    p, a = str(p or '').strip(), str(a or '').strip()
+    if not p or not a:
+        return None
+    return _spec_group(p) == _spec_group(a)
+
+
+def _corroborated(p_row, a_row):
+    hosp = _hosp_match(p_row.get("Hospital", ""), a_row.get("Hospital", ""))
+    spec = _spec_match(p_row.get("Speciality", ""), a_row.get("Speciality", ""))
+    signals = [s for s in (hosp, spec) if s is not None]
+    if not signals:
+        return True
+    return any(signals)
+
+
 MONTH_LABELS = {
     "jan": "January", "feb": "February", "mar": "March", "apr": "April",
     "may": "May", "jun": "June", "jul": "July", "aug": "August",
@@ -102,6 +166,8 @@ def _match_activities(plan_df, actual_df):
                     score = fuzz.token_sort_ratio(_norm_doc(p_doc), _norm_doc(a_doc))
                     if score < FUZZY_DOC_THRESHOLD:
                         continue
+                if not _corroborated(p_row, a_row):
+                    continue
                 candidates.append((score, p_idx, a_idx))
 
     candidates.sort(key=lambda c: c[0], reverse=True)

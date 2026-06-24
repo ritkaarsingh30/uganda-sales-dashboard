@@ -28,7 +28,8 @@ function ActivityTable({ rows, title, variant }) {
         <span className="tbl-title" style={{ color }}>{title}</span>
         <span className="badge n">{rows.length}</span>
       </div>
-      <table>
+      <div className="tbl-scroll">
+<table>
         <thead>
           <tr>
             <th>Doctor</th><th>Hospital</th><th>Speciality</th><th>MR</th>
@@ -74,6 +75,7 @@ function ActivityTable({ rows, title, variant }) {
           ) : null
         })()}
       </table>
+</div>
     </div>
   )
 }

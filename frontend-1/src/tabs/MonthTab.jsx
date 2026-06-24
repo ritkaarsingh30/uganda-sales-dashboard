@@ -186,7 +186,8 @@ export default function MonthTab({ month }) {
               <span className="tbl-title">Activity Expenses</span>
               <span className="badge n">{activity_expenses.length} entries</span>
             </div>
-            <table>
+            <div className="tbl-scroll">
+<table>
               <thead>
                 <tr>
                   <th>#</th><th>Doctor</th><th>Hospital</th><th>Speciality</th>
@@ -209,6 +210,7 @@ export default function MonthTab({ month }) {
                 ))}
               </tbody>
             </table>
+</div>
           </div>
         </>
       )}

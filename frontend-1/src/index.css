@@ -169,7 +169,12 @@ body {
 .h250 { height: 250px; } .h300 { height: 300px; } .h340 { height: 340px; } .h400 { height: 400px; }
 
 .tbl-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 18px; box-shadow: var(--shadow-sm); }
+.tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .tbl-card table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+@media (max-width: 700px) {
+  .tbl-card table { width: auto; min-width: 100%; }
+  .tbl-card th, .tbl-card td { white-space: nowrap; }
+}
 .tbl-card th { background: #f8f6fd; padding: 11px 14px; text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 1px solid var(--border); font-weight: 700; }
 .tbl-card td { padding: 10px 14px; border-bottom: 1px solid #f4f2fb; color: var(--text); }
 .tbl-card tr:last-child td { border-bottom: none; }
@@ -232,3 +237,48 @@ body {
 .collapsible-header:hover { color: var(--accent); }
 
 .tbl-footer-row td { background: #f8f6fd; font-weight: 700; border-top: 1px solid var(--border); }
+
+/* ── Mobile ───────────────────────────────────────────────────── */
+.mobile-nav-toggle {
+  display: none;
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--card); color: var(--text);
+  font-size: 1.05rem; cursor: pointer; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-sm);
+}
+.sidebar-overlay { display: none; }
+
+@media (max-width: 860px) {
+  .shell { position: relative; }
+  .main { padding: 16px 16px 32px; max-width: 100%; }
+  .topbar { align-items: center; }
+
+  .mobile-nav-toggle { display: flex; }
+
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    width: 250px;
+  }
+  .sidebar.mobile-open { transform: translateX(0); }
+  .sidebar.collapsed { width: 250px; padding: 22px 14px; }
+  .sidebar.collapsed .brand-text,
+  .sidebar.collapsed .nav-section-label,
+  .sidebar.collapsed .sidebar-foot { display: block; }
+  .sidebar.collapsed .nav-label { display: inline; }
+  .sidebar.collapsed .nav-item { justify-content: flex-start; padding: 9px 12px; }
+  .sidebar-toggle { display: none; }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed; inset: 0; z-index: 40;
+    background: rgba(15, 10, 30, 0.45);
+  }
+
+  .kpi { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .topbar-title { font-size: 1.2rem; }
+  .month-dots { display: none; }
+}

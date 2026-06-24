@@ -193,7 +193,8 @@ export default function ExpensesTab() {
                 <span className="tbl-title">Expenses — {MONTH_CONFIG[m]?.label || m}</span>
                 <span className="badge n">{entries.length} entries · {EUR(totalEUR)}</span>
               </div>
-              <table>
+              <div className="tbl-scroll">
+<table>
                 <thead>
                   <tr>
                     <th>#</th><th>Doctor</th><th>Hospital</th><th>Speciality</th>
@@ -221,6 +222,7 @@ export default function ExpensesTab() {
                   </tr>
                 </tbody>
               </table>
+</div>
             </div>
           </div>
         )
