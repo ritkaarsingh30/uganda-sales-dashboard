@@ -11,9 +11,9 @@ import SectionLabel from '../components/SectionLabel.jsx'
 
 
 
-const EUR  = n  => n  != null ? '€' + Math.round(n).toLocaleString() : '—'
-const pct  = n  => n  != null ? n.toFixed(1) + '%' : '—'
-const num  = n  => n  != null ? n.toLocaleString() : '—'
+const EUR = n => n != null ? '€' + Math.round(n).toLocaleString() : '—'
+const pct = n => n != null ? n.toFixed(1) + '%' : '—'
+const num = n => n != null ? n.toLocaleString() : '—'
 
 // ── Per-delegate card ─────────────────────────────────────────────────────────
 function DelegateCard({ d, activeMonths }) {
@@ -35,7 +35,7 @@ function DelegateCard({ d, activeMonths }) {
         label: 'Total Calls',
         data: sortedM.map(m => d.months[m]?.calls || 0),
         backgroundColor: sortedM.map(m => monthColor(m).alpha),
-        borderColor:     sortedM.map(m => monthColor(m).solid),
+        borderColor: sortedM.map(m => monthColor(m).solid),
         borderWidth: 1,
         borderRadius: 4,
       },
@@ -49,7 +49,7 @@ function DelegateCard({ d, activeMonths }) {
         label: 'Orders (EUR)',
         data: sortedM.map(m => d.months[m]?.orders_eur || 0),
         backgroundColor: sortedM.map(m => monthColor(m).soft || monthColor(m).alpha),
-        borderColor:     sortedM.map(m => monthColor(m).solid),
+        borderColor: sortedM.map(m => monthColor(m).solid),
         borderWidth: 1,
         borderRadius: 4,
       },
@@ -86,26 +86,26 @@ function DelegateCard({ d, activeMonths }) {
   })
 
   // Radar dimensions — normalised 0–100
-  const maxCalls   = Math.max(...monthKeys.map(m => d.months[m]?.calls        || 0), 1)
-  const maxOrders  = Math.max(...monthKeys.map(m => d.months[m]?.orders_eur   || 0), 1)
-  const maxDays    = Math.max(...monthKeys.map(m => d.months[m]?.days_worked  || 0), 1)
-  const maxPresc   = Math.max(...monthKeys.map(m => d.months[m]?.prescriber   || 0), 1)
-  const maxPharm   = Math.max(...monthKeys.map(m => d.months[m]?.pharmacy     || 0), 1)
+  const maxCalls = Math.max(...monthKeys.map(m => d.months[m]?.calls || 0), 1)
+  const maxOrders = Math.max(...monthKeys.map(m => d.months[m]?.orders_eur || 0), 1)
+  const maxDays = Math.max(...monthKeys.map(m => d.months[m]?.days_worked || 0), 1)
+  const maxPresc = Math.max(...monthKeys.map(m => d.months[m]?.prescriber || 0), 1)
+  const maxPharm = Math.max(...monthKeys.map(m => d.months[m]?.pharmacy || 0), 1)
 
   const radarDatasets = sortedM.map(m => {
     const mm = d.months[m] || {}
     return {
       label: MONTH_CONFIG[m]?.short || m.toUpperCase(),
       data: [
-        ((mm.calls      || 0) / maxCalls  * 100),
+        ((mm.calls || 0) / maxCalls * 100),
         ((mm.orders_eur || 0) / maxOrders * 100),
-        ((mm.days_worked|| 0) / maxDays   * 100),
-        ((mm.prescriber || 0) / maxPresc  * 100),
-        ((mm.pharmacy   || 0) / maxPharm  * 100),
+        ((mm.days_worked || 0) / maxDays * 100),
+        ((mm.prescriber || 0) / maxPresc * 100),
+        ((mm.pharmacy || 0) / maxPharm * 100),
       ],
       raw: [mm.calls || 0, mm.orders_eur || 0, mm.days_worked || 0, mm.prescriber || 0, mm.pharmacy || 0],
       backgroundColor: monthColor(m).soft || monthColor(m).alpha.replace('0.75', '0.15'),
-      borderColor:     monthColor(m).solid,
+      borderColor: monthColor(m).solid,
       borderWidth: 2,
       pointBackgroundColor: monthColor(m).solid,
       pointRadius: 3,
@@ -153,7 +153,7 @@ function DelegateCard({ d, activeMonths }) {
       r: {
         min: 0, max: 100,
         ticks: { display: false },
-        grid:  { color: 'rgba(148,163,184,0.2)' },
+        grid: { color: 'rgba(148,163,184,0.2)' },
         angleLines: { color: 'rgba(148,163,184,0.2)' },
         pointLabels: { color: '#64748b', font: { size: 10 } },
       },
@@ -164,8 +164,8 @@ function DelegateCard({ d, activeMonths }) {
   const tourPct = q.tour_coverage_pct
   const coverageColor = tourPct == null ? 'var(--muted)'
     : tourPct >= 80 ? 'var(--green)'
-    : tourPct >= 50 ? 'var(--orange)'
-    : 'var(--red)'
+      : tourPct >= 50 ? 'var(--orange)'
+        : 'var(--red)'
 
   return (
     <div style={{
@@ -197,10 +197,10 @@ function DelegateCard({ d, activeMonths }) {
         </div>
         {/* Summary pills */}
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-          <StatPill label="Calls"   value={num(q.calls)}         color="var(--accent)"  />
-          <StatPill label="Orders"  value={EUR(q.orders_eur)}    color="var(--purple)"  />
-          <StatPill label="Days"    value={`${q.days_worked ?? '—'}d`} color="var(--teal)" />
-          <StatPill label="Coverage" value={pct(tourPct)}        color={coverageColor}  />
+          <StatPill label="Calls" value={num(q.calls)} color="var(--accent)" />
+          <StatPill label="Orders" value={EUR(q.orders_eur)} color="var(--purple)" />
+          <StatPill label="Days" value={`${q.days_worked ?? '—'}d`} color="var(--teal)" />
+          <StatPill label="Coverage" value={pct(tourPct)} color={coverageColor} />
         </div>
       </div>
 
@@ -222,7 +222,7 @@ function DelegateCard({ d, activeMonths }) {
             Orders (EUR) by Month
           </div>
           <div style={{ height: 130 }}>
-            <Bar data={ordersData} options={miniBarOpts(v => '€' + (v >= 1000 ? (v/1000).toFixed(1)+'k' : v))} />
+            <Bar data={ordersData} options={miniBarOpts(v => '€' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v))} />
           </div>
         </div>
 
@@ -315,9 +315,9 @@ export default function DelegatesTab() {
   const callsBar = {
     labels: filteredDels.map(d => d.short_name || d.display_name),
     datasets: [
-      { label: 'Total Calls', data: filteredDels.map(d => d.q1?.calls       || 0), backgroundColor: PALETTE[0], borderRadius: 3 },
-      { label: 'Prescribers', data: filteredDels.map(d => d.q1?.prescriber  || 0), backgroundColor: PALETTE[2], borderRadius: 3 },
-      { label: 'Pharmacy',    data: filteredDels.map(d => d.q1?.pharmacy    || 0), backgroundColor: PALETTE[1], borderRadius: 3 },
+      { label: 'Total Calls', data: filteredDels.map(d => d.q1?.calls || 0), backgroundColor: PALETTE[0], borderRadius: 3 },
+      { label: 'Prescribers', data: filteredDels.map(d => d.q1?.prescriber || 0), backgroundColor: PALETTE[2], borderRadius: 3 },
+      { label: 'Pharmacy', data: filteredDels.map(d => d.q1?.pharmacy || 0), backgroundColor: PALETTE[1], borderRadius: 3 },
     ],
   }
 
@@ -334,22 +334,22 @@ export default function DelegatesTab() {
   }
 
   const summaryRows = filteredDels.map((d, i) => ({
-    rank:           i + 1,
-    name:           d.display_name,
-    initial:        (d.short_name || d.display_name || '?')[0].toUpperCase(),
-    color:          PALETTE[i % PALETTE.length],
-    territory:      d.territory,
-    total_calls:    d.q1?.calls,
-    prescriber:     d.q1?.prescriber,
-    pharmacy:       d.q1?.pharmacy,
-    drs_converted:  d.q1?.drs_converted,
+    rank: i + 1,
+    name: d.display_name,
+    initial: (d.short_name || d.display_name || '?')[0].toUpperCase(),
+    color: PALETTE[i % PALETTE.length],
+    territory: d.territory,
+    total_calls: d.q1?.calls,
+    prescriber: d.q1?.prescriber,
+    pharmacy: d.q1?.pharmacy,
+    drs_converted: d.q1?.drs_converted,
     conversion_pct: d.q1?.conversion_pct ?? null,
-    orders_eur:     d.q1?.orders_eur != null ? EUR(d.q1.orders_eur) : '—',
-    ctc_eur:        d.q1?.ctc_eur    != null ? EUR(d.q1.ctc_eur)    : '—',
-    ctc_ratio:      d.q1?.ctc_ratio  ?? null,
-    days_worked:    d.q1?.days_worked ?? null,
-    days_target:    d.q1?.days_target ?? null,
-    coverage_pct:   d.q1?.tour_coverage_pct ?? null,
+    orders_eur: d.q1?.orders_eur != null ? EUR(d.q1.orders_eur) : '—',
+    ctc_eur: d.q1?.ctc_eur != null ? EUR(d.q1.ctc_eur) : '—',
+    ctc_ratio: d.q1?.ctc_ratio ?? null,
+    days_worked: d.q1?.days_worked ?? null,
+    days_target: d.q1?.days_target ?? null,
+    coverage_pct: d.q1?.tour_coverage_pct ?? null,
   }))
 
   const MiniBar = ({ pct, color, label }) => (
@@ -376,15 +376,14 @@ export default function DelegatesTab() {
         </div>
       ),
     },
-    { key: 'territory',     label: 'Territory'   },
-    { key: 'total_calls',   label: 'Total Calls', align: 'right' },
-    { key: 'prescriber',    label: 'Prescribers', align: 'right' },
-    { key: 'pharmacy',      label: 'Pharmacy',    align: 'right' },
-    { key: 'drs_converted', label: 'DRs Conv.',   align: 'right' },
-    { key: 'conversion_pct',label: 'Conv %',      align: 'right' },
-    { key: 'orders_eur',    label: 'Orders €',    align: 'right' },
-    { key: 'ctc_eur',       label: 'CTC €',       align: 'right' },
-    { key: 'ctc_ratio',     label: 'CTC Ratio',   align: 'right' },
+    { key: 'territory', label: 'Territory' },
+    { key: 'total_calls', label: 'Total Calls', align: 'right' },
+    { key: 'prescriber', label: 'Prescribers', align: 'right' },
+    { key: 'pharmacy', label: 'Pharmacy', align: 'right' },
+    { key: 'drs_converted', label: 'DRs Conv.', align: 'right' },
+    { key: 'orders_eur', label: 'Orders €', align: 'right' },
+    { key: 'ctc_eur', label: 'CTC €', align: 'right' },
+    { key: 'ctc_ratio', label: 'CTC Ratio', align: 'right' },
     {
       key: 'days_wt', label: 'Days Worked', align: 'left',
       render: row => row.days_worked == null ? '—' : (
@@ -407,11 +406,11 @@ export default function DelegatesTab() {
     <div>
       {/* KPIs */}
       <div className="kpi">
-        <KpiCard label="Total Calls"    value={(q1_summary?.total_calls || 0).toLocaleString()} />
-        <KpiCard label="Total Orders"   value={EUR(q1_summary?.total_orders_eur)} />
-        <KpiCard label="Total CTC"      value={EUR(q1_summary?.total_ctc_eur)} />
-        <KpiCard label="CTC Ratio"      value={q1_summary?.overall_ctc_ratio != null ? (q1_summary.overall_ctc_ratio * 100).toFixed(1) + '%' : '—'} />
-        <KpiCard label="Active MRs"     value={filteredDels.length} />
+        <KpiCard label="Total Calls" value={(q1_summary?.total_calls || 0).toLocaleString()} />
+        <KpiCard label="Total Orders" value={EUR(q1_summary?.total_orders_eur)} />
+        <KpiCard label="Total CTC" value={EUR(q1_summary?.total_ctc_eur)} />
+        <KpiCard label="CTC Ratio" value={q1_summary?.overall_ctc_ratio != null ? (q1_summary.overall_ctc_ratio * 100).toFixed(1) + '%' : '—'} />
+        <KpiCard label="Active MRs" value={filteredDels.length} />
       </div>
 
       {/* AI Insights */}

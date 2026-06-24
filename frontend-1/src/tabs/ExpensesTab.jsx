@@ -61,6 +61,11 @@ export default function ExpensesTab() {
         if (!entries.length) return null
 
         const totalEUR = entries.reduce((a, r) => a + (r.amount_eur || 0), 0)
+        const totalOutcome = entries.reduce((a, r) => {
+          const v = Array.isArray(r.sales_outcome) ? r.sales_outcome.join(',') : r.sales_outcome
+          const n = parseFloat(v)
+          return a + (Number.isFinite(n) ? n : 0)
+        }, 0)
         const monthCol = `var(--${m})`
 
         // Aggregate count + EUR per product
@@ -198,7 +203,7 @@ export default function ExpensesTab() {
                 <thead>
                   <tr>
                     <th>#</th><th>Doctor</th><th>Hospital</th><th>Speciality</th>
-                    <th>Activity Type</th><th>Products</th><th>Amount (EUR)</th><th>Visits</th><th>MR</th>
+                    <th>Activity Type</th><th>Products</th><th>Amount (EUR)</th><th>Visits</th><th>MR</th><th>Sales Outcome</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -213,12 +218,20 @@ export default function ExpensesTab() {
                       <td style={{ fontFamily: 'var(--font-mono)' }}>{EUR(r.amount_eur)}</td>
                       <td>{r.num_visits}</td>
                       <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.responsible}</td>
+                      <td style={{ fontSize: '0.75rem' }}>
+                        {r.sales_outcome && r.sales_outcome !== '0' && r.sales_outcome !== 'nan'
+                          ? <span style={{ color: 'var(--green)', fontWeight: 600 }}>{Array.isArray(r.sales_outcome) ? r.sales_outcome.join(', ') : r.sales_outcome}</span>
+                          : <span style={{ color: 'var(--muted)' }}>—</span>}
+                      </td>
                     </tr>
                   ))}
                   <tr className="tbl-footer-row">
                     <td colSpan={6} style={{ textAlign: 'right', color: 'var(--muted)' }}>Total</td>
                     <td style={{ fontFamily: 'var(--font-mono)' }}>{EUR(totalEUR)}</td>
                     <td colSpan={2} />
+                    <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--green)', fontWeight: 600 }}>
+                      {totalOutcome ? totalOutcome.toLocaleString() : '—'}
+                    </td>
                   </tr>
                 </tbody>
               </table>
