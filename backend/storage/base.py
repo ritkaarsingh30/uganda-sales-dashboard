@@ -13,3 +13,7 @@ class StorageBackend(ABC):
     @abstractmethod
     def exists(self, relative_path: str) -> bool:
         pass
+
+    @abstractmethod
+    def list_dirs(self, folder: str = "") -> list[str]:
+        pass

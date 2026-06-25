@@ -22,3 +22,9 @@ class LocalStorage(StorageBackend):
 
     def exists(self, relative_path: str) -> bool:
         return os.path.exists(self.root / relative_path)
+
+    def list_dirs(self, folder: str = "") -> list[str]:
+        folder_path = self.root / folder if folder else self.root
+        if not folder_path.exists():
+            return []
+        return [e.name for e in os.scandir(folder_path) if e.is_dir()]

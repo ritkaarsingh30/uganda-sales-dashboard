@@ -36,13 +36,10 @@ MONTH_FOLDER_MAP = {
 def _discover_month_folders(storage) -> list[tuple[str, str]]:
     results = []
     try:
-        root = storage.root
-        for entry in sorted(os.scandir(root), key=lambda e: e.name):
-            if entry.is_dir():
-                name_lower = entry.name.lower()
-                key = MONTH_FOLDER_MAP.get(name_lower)
-                if key:
-                    results.append((key, entry.name))
+        for name in sorted(storage.list_dirs()):
+            key = MONTH_FOLDER_MAP.get(name.lower())
+            if key:
+                results.append((key, name))
     except Exception as e:
         print(f"[loaders] Month discovery error: {e}")
     return results
@@ -51,12 +48,12 @@ def _discover_month_folders(storage) -> list[tuple[str, str]]:
 def _find_root_file(storage, kind: str) -> bytes | None:
     """Find master file in UGANDA root. kind: 'sales'"""
     try:
-        root = storage.root
-        for entry in os.scandir(root):
-            if entry.is_file() and entry.name.endswith(".xlsx") and not entry.name.startswith("~$"):
-                name_lower = entry.name.lower()
-                if kind == "sales" and ("sale" in name_lower):
-                    return storage.get_file_bytes(entry.name)
+        for fname in storage.list_files(""):
+            if fname.startswith("~$"):
+                continue
+            name_lower = fname.lower()
+            if name_lower.endswith(".xlsx") and kind == "sales" and ("sale" in name_lower):
+                return storage.get_file_bytes(fname)
     except Exception as e:
         print(f"[loaders] Root file search error for {kind!r}: {e}")
     return None

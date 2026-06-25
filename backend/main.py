@@ -108,6 +108,8 @@ async def refresh_data():
         from loaders import load_all_data, load_annual_projections, _find_month_file, _discover_month_folders
         from cache.redis_client import flush_all_api_cache
         storage = app_state.get("storage")
+        if hasattr(storage, "discover"):
+            storage.discover()
         data    = load_all_data(storage)
         app_state["data"]           = data
         app_state["insights_cache"] = None
