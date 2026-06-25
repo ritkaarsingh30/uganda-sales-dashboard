@@ -9,7 +9,7 @@ USD_TO_EUR = 0.85
 
 def ugx_to_eur(amount: float) -> float:
     return amount / UGX_TO_EUR
-
+# prefer usd to euro only
 
 def usd_to_eur(amount: float) -> float:
     return amount * USD_TO_EUR
