@@ -23,14 +23,12 @@ export default function ExpensesTab() {
     activeMonths.some(m => (MONTH_CONFIG[m]?.short || m) === b.month || b.month?.toLowerCase().startsWith(m))
   )
 
-  // "Current month balance" = the most recently loaded month's opening balance plus
-  // that month's RECEIVED amount.
   const lastFlow = [...(budget_flow || [])].sort(
     (a, b) => (MONTH_CONFIG[a.month?.toLowerCase().slice(0, 3)]?.monthNum || 0) -
       (MONTH_CONFIG[b.month?.toLowerCase().slice(0, 3)]?.monthNum || 0)
   ).at(-1)
 
-  const totalBalance = (lastFlow?.opening_balance_eur || 0) + (lastFlow?.received_eur || 0)
+  const totalBalance = lastFlow?.received_eur || 0
 
   const flowBar = {
     labels: (budget_flow || []).map(b => b.month),
