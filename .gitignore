@@ -2,3 +2,4 @@
 node_modules
 frontend
 .env
+__pycache__

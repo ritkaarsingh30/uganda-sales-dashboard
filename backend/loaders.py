@@ -33,15 +33,19 @@ MONTH_FOLDER_MAP = {
 }
 
 
+_MONTH_ORDER = list(MONTH_FOLDER_MAP.values())
+
+
 def _discover_month_folders(storage) -> list[tuple[str, str]]:
     results = []
     try:
-        for name in sorted(storage.list_dirs()):
+        for name in storage.list_dirs():
             key = MONTH_FOLDER_MAP.get(name.lower())
             if key:
                 results.append((key, name))
     except Exception as e:
         print(f"[loaders] Month discovery error: {e}")
+    results.sort(key=lambda kv: _MONTH_ORDER.index(kv[0]))
     return results
 
 
