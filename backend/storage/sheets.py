@@ -16,6 +16,29 @@ XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 MAX_RETRIES = 4
 
 
+def _prefer_native_sheet(entries: list[dict]) -> dict[str, tuple[str, str]]:
+    """When a native Google Sheet and an uploaded .xlsx share a base name,
+    keep only the native Sheet - it's the one people actively edit."""
+    by_base: dict[str, list[dict]] = {}
+    for entry in entries:
+        name = entry["name"].strip()
+        base = name[:-5] if name.lower().endswith(".xlsx") else name
+        by_base.setdefault(base.lower(), []).append(entry)
+
+    result: dict[str, tuple[str, str]] = {}
+    for base_key, group in by_base.items():
+        sheets = [e for e in group if e["mimeType"] == SHEET_MIME]
+        chosen = sheets or group
+        if len(chosen) > 1:
+            print(
+                f"[SheetStorage] Ambiguous duplicate files for {base_key!r}: "
+                f"{[e['name'] for e in chosen]!r} - keeping all"
+            )
+        for e in chosen:
+            result[e["name"]] = (e["id"], e["mimeType"])
+    return result
+
+
 class SheetStorage(StorageBackend):
     """Mirrors the UGANDA/ local folder layout (root files + month subfolders)
     inside a single shared Google Drive folder. Each Google Sheet is exported
@@ -82,21 +105,23 @@ class SheetStorage(StorageBackend):
         """Rebuild the folder/file map from Drive. Cheap: one list call per
         folder (root + each month subfolder), no file content is fetched."""
         self._dirs = {}
-        self._files = {"": {}}
+        self._files = {}
 
         root_entries = self._list_children(self._folder_id)
+        root_files = []
         for entry in root_entries:
             if entry["mimeType"] == FOLDER_MIME:
                 self._dirs[entry["name"]] = entry["id"]
             elif entry["mimeType"] in (SHEET_MIME, XLSX_MIME):
-                self._files[""][entry["name"]] = (entry["id"], entry["mimeType"])
+                root_files.append(entry)
+        self._files[""] = _prefer_native_sheet(root_files)
 
         for dir_name, dir_id in self._dirs.items():
-            self._files[dir_name] = {
-                entry["name"]: (entry["id"], entry["mimeType"])
-                for entry in self._list_children(dir_id)
+            entries = [
+                entry for entry in self._list_children(dir_id)
                 if entry["mimeType"] in (SHEET_MIME, XLSX_MIME)
-            }
+            ]
+            self._files[dir_name] = _prefer_native_sheet(entries)
 
     # ── StorageBackend interface ────────────────────────────────────────────
 

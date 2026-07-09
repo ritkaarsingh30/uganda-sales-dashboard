@@ -3,7 +3,7 @@ from .base import StorageBackend
 
 
 def get_storage() -> StorageBackend:
-    backend = os.getenv("STORAGE_BACKEND", "local")
+    backend = os.getenv("STORAGE_BACKEND", "local").strip().lower()
     if backend == "local":
         from .local import LocalStorage
         return LocalStorage()

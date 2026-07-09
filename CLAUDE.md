@@ -31,8 +31,8 @@ cd backend
 ```
 
 Key env vars in `backend/.env`:
-- `STORAGE_BACKEND=local` — only local storage is implemented
-- `UGANDA_DATA_PATH=../UGANDA` — path to the Excel data folder
+- `STORAGE_BACKEND=local` or `sheets` — `local` reads Excel files from `UGANDA_DATA_PATH`; `sheets` reads the same folder/file layout mirrored inside a shared Google Drive folder (requires `GOOGLE_DRIVE_FOLDER_ID` and `GOOGLE_CREDENTIALS_JSON`, a service-account JSON pasted as one line)
+- `UGANDA_DATA_PATH=../UGANDA` — path to the Excel data folder (used by `local` backend)
 - `GROQ_API_KEY` — required for AI insights (Llama 3.1 via Groq)
 - `REDIS_URL` — optional; caching degrades gracefully if Redis is unavailable
 
@@ -64,13 +64,15 @@ The root `UGANDA/` folder holds master files (e.g. `UGANDA SALE APRIL 26.xlsx`).
 
 `loaders.py` discovers these by folder name (matches `MONTH_FOLDER_MAP`) and file keyword matching.
 
+The Sheets backend (`STORAGE_BACKEND=sheets`) mirrors this same root + month-subfolder convention inside one shared Google Drive folder — native Google Sheets are exported to XLSX on read, uploaded `.xlsx` files are downloaded as-is, so `loaders.py` is unchanged either way. If a folder has both a native Google Sheet and an uploaded `.xlsx` copy with the same base name, the native Sheet always wins (it's assumed to be the one people actively edit). Note: canonical sales-rate pre-seeding (`build_canonical_rates`) only runs off a root-level "sales" file; since the Drive folder currently has no loose root files (only month subfolders), this is a no-op under Sheets mode and each month falls back to its own per-row rates.
+
 ### Backend structure
 - `main.py` — FastAPI app, lifespan loader, CORS, NaN-safe JSON response class
 - `loaders.py` — all Excel parsing; produces DataFrames stored in `app_state["data"]`
 - `routers/` — one router per tab: `overview`, `months`, `products`, `delegates`, `expenses`, `insights`, `activities`
 - `name_map.py` — normalization/display names for MRs, products, activities, territories
 - `constants.py` — `UGX_TO_EUR = 3800.0`, color palette
-- `storage/` — `StorageBackend` ABC + `local.py` implementation; `get_storage()` factory reads `STORAGE_BACKEND` env var
+- `storage/` — `StorageBackend` ABC + `local.py` (Excel filesystem) and `sheets.py` (Google Drive) implementations; `get_storage()` factory reads `STORAGE_BACKEND` env var
 - `cache/redis_client.py` — optional Redis caching layer for API responses
 - `insights_builder.py` — builds the prompt and calls Groq to generate action-point insights
 

@@ -18,7 +18,10 @@ class LocalStorage(StorageBackend):
         folder_path = self.root / folder
         if not folder_path.exists():
             return []
-        return os.listdir(folder_path)
+        return [
+            f for f in os.listdir(folder_path)
+            if f.lower().endswith(".xlsx") and not f.startswith("~$")
+        ]
 
     def exists(self, relative_path: str) -> bool:
         return os.path.exists(self.root / relative_path)

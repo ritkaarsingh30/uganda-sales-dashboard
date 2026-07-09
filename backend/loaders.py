@@ -56,7 +56,7 @@ def _find_root_file(storage, kind: str) -> bytes | None:
             if fname.startswith("~$"):
                 continue
             name_lower = fname.lower()
-            if name_lower.endswith(".xlsx") and kind == "sales" and ("sale" in name_lower):
+            if kind == "sales" and ("sale" in name_lower):
                 return storage.get_file_bytes(fname)
     except Exception as e:
         print(f"[loaders] Root file search error for {kind!r}: {e}")
@@ -78,7 +78,7 @@ def _find_month_file(storage, folder: str, kind: str) -> bytes | None:
             if fname.startswith("~$"):
                 continue
             fname_lower = fname.lower()
-            if fname_lower.endswith(".xlsx") and any(p in fname_lower for p in patterns):
+            if any(p in fname_lower for p in patterns):
                 return storage.get_file_bytes(f"{folder}/{fname}")
     except Exception as e:
         print(f"[loaders] Month file search error ({kind} in {folder}): {e}")
