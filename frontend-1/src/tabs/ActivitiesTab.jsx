@@ -13,9 +13,9 @@ const UGX = n => n != null ? 'UGX ' + Math.round(n).toLocaleString() : '—'
 const EUR = n => n != null ? '€' + n.toFixed(2) : '—'
 
 const STATUS_COLORS = {
-  executed:         'rgba(16,185,129,0.8)',
+  executed: 'rgba(16,185,129,0.8)',
   planned_not_done: 'rgba(245,158,11,0.8)',
-  unplanned:        'rgba(99,102,241,0.8)',
+  unplanned: 'rgba(99,102,241,0.8)',
 }
 
 function ActivityTable({ rows, title, variant }) {
@@ -29,53 +29,53 @@ function ActivityTable({ rows, title, variant }) {
         <span className="badge n">{rows.length}</span>
       </div>
       <div className="tbl-scroll">
-<table>
-        <thead>
-          <tr>
-            <th>Doctor</th><th>Hospital</th><th>Speciality</th><th>MR</th>
-            <th>Area</th><th>Activity Type</th><th>Focus Products</th>
-            <th>Planned (EUR)</th><th>Actual</th><th>Visits</th>
-            {variant !== 'planned_not_done' && <th>Sales Outcome</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i}>
-              <td>{r.doctor}</td>
-              <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.hospital}</td>
-              <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.speciality}</td>
-              <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.delegate}</td>
-              <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.area}</td>
-              <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.activity}</td>
-              <td style={{ fontSize: '0.75rem' }}>{r.focus_products}</td>
-              <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>{r.planned_eur > 0 ? EUR(r.planned_eur) : '—'}</td>
-              <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>{r.actual_eur > 0 ? EUR(r.actual_eur) : '—'}</td>
-              <td>{r.num_visits || '—'}</td>
-              {variant !== 'planned_not_done' && (
-                <td style={{ fontSize: '0.75rem', maxWidth: 180 }}>
-                  {r.sales_outcome && r.sales_outcome !== '0' && r.sales_outcome !== 'nan'
-                    ? <span style={{ color: 'var(--green)', fontWeight: 600 }}>{Array.isArray(r.sales_outcome) ? r.sales_outcome.join(', ') : r.sales_outcome}</span>
-                    : <span style={{ color: 'var(--muted)' }}>—</span>}
-                </td>
-              )}
+        <table>
+          <thead>
+            <tr>
+              <th>Doctor</th><th>Hospital</th><th>Speciality</th><th>MR</th>
+              <th>Area</th><th>Activity Type</th><th>Focus Products</th>
+              <th>Planned (EUR)</th><th>Actual</th><th>Visits</th>
+              {variant !== 'planned_not_done' && <th>Sales Outcome</th>}
             </tr>
-          ))}
-        </tbody>
-        {variant !== 'planned_not_done' && (() => {
-          const totalActual = rows.reduce((s, r) => s + (r.actual_eur || 0), 0)
-          return totalActual > 0 ? (
-            <tfoot>
-              <tr style={{ background: '#f8fafc', borderTop: '2px solid var(--border)' }}>
-                <td colSpan={7} style={{ padding: '6px 12px', fontSize: '0.72rem', color: 'var(--muted)', fontWeight: 600 }}>TOTAL</td>
-                <td style={{ padding: '6px 12px', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text)' }}>—</td>
-                <td style={{ padding: '6px 12px', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, color }}>{EUR(totalActual)}</td>
-                <td colSpan={2} />
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i}>
+                <td>{r.doctor}</td>
+                <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.hospital}</td>
+                <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.speciality}</td>
+                <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.delegate}</td>
+                <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.area}</td>
+                <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.activity}</td>
+                <td style={{ fontSize: '0.75rem' }}>{r.focus_products}</td>
+                <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>{r.planned_eur > 0 ? EUR(r.planned_eur) : '—'}</td>
+                <td style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>{r.actual_eur > 0 ? EUR(r.actual_eur) : '—'}</td>
+                <td>{r.num_visits || '—'}</td>
+                {variant !== 'planned_not_done' && (
+                  <td style={{ fontSize: '0.75rem', maxWidth: 180 }}>
+                    {r.sales_outcome && r.sales_outcome !== '0' && r.sales_outcome !== 'nan'
+                      ? <span style={{ color: 'var(--green)', fontWeight: 600 }}>{Array.isArray(r.sales_outcome) ? r.sales_outcome.join(', ') : r.sales_outcome}</span>
+                      : <span style={{ color: 'var(--muted)' }}>—</span>}
+                  </td>
+                )}
               </tr>
-            </tfoot>
-          ) : null
-        })()}
-      </table>
-</div>
+            ))}
+          </tbody>
+          {variant !== 'planned_not_done' && (() => {
+            const totalActual = rows.reduce((s, r) => s + (r.actual_eur || 0), 0)
+            return totalActual > 0 ? (
+              <tfoot>
+                <tr style={{ background: '#f8fafc', borderTop: '2px solid var(--border)' }}>
+                  <td colSpan={7} style={{ padding: '6px 12px', fontSize: '0.72rem', color: 'var(--muted)', fontWeight: 600 }}>TOTAL</td>
+                  <td style={{ padding: '6px 12px', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, color: 'var(--text)' }}>—</td>
+                  <td style={{ padding: '6px 12px', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, color }}>{EUR(totalActual)}</td>
+                  <td colSpan={2} />
+                </tr>
+              </tfoot>
+            ) : null
+          })()}
+        </table>
+      </div>
     </div>
   )
 }
@@ -109,18 +109,18 @@ function useMonthCharts(mb) {
     const delegateBar = {
       labels: delLabels,
       datasets: [
-        { label: 'Executed',     data: delLabels.map(d => delegateMap[d].executed),         backgroundColor: STATUS_COLORS.executed,         stack: 'a' },
+        { label: 'Executed', data: delLabels.map(d => delegateMap[d].executed), backgroundColor: STATUS_COLORS.executed, stack: 'a' },
         { label: 'Not Executed', data: delLabels.map(d => delegateMap[d].planned_not_done), backgroundColor: STATUS_COLORS.planned_not_done, stack: 'a' },
-        { label: 'Unplanned',   data: delLabels.map(d => delegateMap[d].unplanned),         backgroundColor: STATUS_COLORS.unplanned,         stack: 'a' },
+        { label: 'Unplanned', data: delLabels.map(d => delegateMap[d].unplanned), backgroundColor: STATUS_COLORS.unplanned, stack: 'a' },
       ],
     }
 
     // Activities by speciality — only executed + unplanned (planned_not_done never happened)
     const specMap = {}
-    ;[...matched, ...unplanned_done].forEach(r => {
-      const s = r.speciality || 'Other'
-      specMap[s] = (specMap[s] || 0) + 1
-    })
+      ;[...matched, ...unplanned_done].forEach(r => {
+        const s = r.speciality || 'Other'
+        specMap[s] = (specMap[s] || 0) + 1
+      })
     const specEntries = Object.entries(specMap).sort((a, b) => b[1] - a[1])
     const specialityBar = {
       labels: specEntries.map(([k]) => k),
@@ -133,12 +133,12 @@ function useMonthCharts(mb) {
 
     // Budget: planned vs actual per delegate (EUR)
     const budgetMap = {}
-    ;[...matched, ...planned_not_done].forEach(r => {
-      const del = r.delegate || 'Unknown'
-      if (!budgetMap[del]) budgetMap[del] = { planned: 0, actual: 0 }
-      budgetMap[del].planned += r.planned_eur || 0
-      budgetMap[del].actual  += r.actual_eur  || 0
-    })
+      ;[...matched, ...planned_not_done].forEach(r => {
+        const del = r.delegate || 'Unknown'
+        if (!budgetMap[del]) budgetMap[del] = { planned: 0, actual: 0 }
+        budgetMap[del].planned += r.planned_eur || 0
+        budgetMap[del].actual += r.actual_eur || 0
+      })
     unplanned_done.forEach(r => {
       const del = r.delegate || r.responsible || 'Unknown'
       if (!budgetMap[del]) budgetMap[del] = { planned: 0, actual: 0 }
@@ -149,7 +149,7 @@ function useMonthCharts(mb) {
       labels: budgetLabels,
       datasets: [
         { label: 'Planned (EUR)', data: budgetLabels.map(d => +budgetMap[d].planned.toFixed(2)), backgroundColor: 'rgba(148,163,184,0.5)' },
-        { label: 'Actual (EUR)',  data: budgetLabels.map(d => +budgetMap[d].actual.toFixed(2)),  backgroundColor: 'rgba(99,102,241,0.75)' },
+        { label: 'Actual (EUR)', data: budgetLabels.map(d => +budgetMap[d].actual.toFixed(2)), backgroundColor: 'rgba(99,102,241,0.75)' },
       ],
     }
 
@@ -179,19 +179,14 @@ export default function ActivitiesTab() {
   return (
     <div>
       <div className="kpi">
-        <KpiCard label="Total Planned"       value={overall?.total_planned} />
-        <KpiCard label="Executed"            value={overall?.executed} />
-        <KpiCard label="Not Executed"        value={overall?.not_executed} />
-        <KpiCard label="Unplanned"           value={overall?.unplanned} />
-        <KpiCard label="Execution Rate"      value={overall?.execution_rate_pct != null ? overall.execution_rate_pct.toFixed(1) + '%' : '—'} />
-        <KpiCard label="Planned Budget"      value={EUR(overall?.planned_budget_eur)} />
-        <KpiCard label="Actual Spent"        value={EUR(overall?.actual_spent_eur)} />
+        <KpiCard label="Total Planned" value={overall?.total_planned} />
+        <KpiCard label="Executed" value={overall?.executed} />
+        <KpiCard label="Not Executed" value={overall?.not_executed} />
+        <KpiCard label="Unplanned" value={overall?.unplanned} />
+        <KpiCard label="Execution Rate" value={overall?.execution_rate_pct != null ? overall.execution_rate_pct.toFixed(1) + '%' : '—'} />
+        <KpiCard label="Planned Budget" value={EUR(overall?.planned_budget_eur)} />
+        <KpiCard label="Actual Spent" value={EUR(overall?.actual_spent_eur)} />
 
-        <KpiCard
-          label="Activity ROI"
-          value={overall?.roi_pct != null ? overall.roi_pct.toFixed(1) + '%' : '—'}
-          sub="outcome ÷ spend"
-        />
         <KpiCard
           label="Cost per Visit"
           value={overall?.cost_per_visit_eur != null ? '€' + overall.cost_per_visit_eur.toFixed(2) : '—'}
@@ -253,14 +248,14 @@ function MonthSection({ m, mb, s, monthColor }) {
       <SectionLabel tag={MONTH_CONFIG[m]?.label || m.toUpperCase()} text="Activity Plan vs Actual" monthColor={monthColor} large />
 
       <div className="kpi" style={{ marginBottom: 16 }}>
-        <KpiCard label="Planned"        value={s?.total_planned} monthColor={monthColor} />
-        <KpiCard label="Executed"       value={s?.executed} />
-        <KpiCard label="Not Executed"   value={s?.not_executed} />
-        <KpiCard label="Unplanned"      value={s?.unplanned} />
+        <KpiCard label="Planned" value={s?.total_planned} monthColor={monthColor} />
+        <KpiCard label="Executed" value={s?.executed} />
+        <KpiCard label="Not Executed" value={s?.not_executed} />
+        <KpiCard label="Unplanned" value={s?.unplanned} />
         <KpiCard label="Execution Rate" value={s?.execution_rate_pct != null ? s.execution_rate_pct.toFixed(1) + '%' : '—'} />
 
-        <KpiCard label="With Outcome"   value={s?.with_outcome} />
-        <KpiCard label="Actual Spent"   value={EUR(s?.actual_spent_eur)} />
+        <KpiCard label="With Outcome" value={s?.with_outcome} />
+        <KpiCard label="Actual Spent" value={EUR(s?.actual_spent_eur)} />
       </div>
 
       <div className="grid-2" style={{ marginBottom: 16 }}>
@@ -287,9 +282,9 @@ function MonthSection({ m, mb, s, monthColor }) {
         </ChartCard>
       </div>
 
-      <ActivityTable rows={mb.matched}          title="Executed Activities"    variant="executed"         />
+      <ActivityTable rows={mb.matched} title="Executed Activities" variant="executed" />
       <ActivityTable rows={mb.planned_not_done} title="Planned — Not Executed" variant="planned_not_done" />
-      <ActivityTable rows={mb.unplanned_done}   title="Unplanned Activities"   variant="unplanned"        />
+      <ActivityTable rows={mb.unplanned_done} title="Unplanned Activities" variant="unplanned" />
     </div>
   )
 }

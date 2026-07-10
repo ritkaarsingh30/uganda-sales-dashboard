@@ -42,11 +42,6 @@ export default function ExpensesTab() {
 
   return (
     <div>
-      <div className="kpi">
-
-        <KpiCard label="Current Month Balance (EUR)" value={EUR(totalBalance)} />
-
-      </div>
 
       <div>
         <ChartCard title="Budget Flow by Month (EUR)" height="h300">
@@ -197,43 +192,43 @@ export default function ExpensesTab() {
                 <span className="badge n">{entries.length} entries · {EUR(totalEUR)}</span>
               </div>
               <div className="tbl-scroll">
-<table>
-                <thead>
-                  <tr>
-                    <th>#</th><th>Doctor</th><th>Hospital</th><th>Speciality</th>
-                    <th>Activity Type</th><th>Products</th><th>Amount (EUR)</th><th>Visits</th><th>MR</th><th>Sales Outcome</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {entries.map((r, i) => (
-                    <tr key={i}>
-                      <td style={{ color: 'var(--muted)' }}>{r.sn}</td>
-                      <td>{r.doctor}</td>
-                      <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.hospital}</td>
-                      <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.speciality}</td>
-                      <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.activity}</td>
-                      <td style={{ fontSize: '0.75rem' }}>{r.products}</td>
-                      <td style={{ fontFamily: 'var(--font-mono)' }}>{EUR(r.amount_eur)}</td>
-                      <td>{r.num_visits}</td>
-                      <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.responsible}</td>
-                      <td style={{ fontSize: '0.75rem' }}>
-                        {r.sales_outcome && r.sales_outcome !== '0' && r.sales_outcome !== 'nan'
-                          ? <span style={{ color: 'var(--green)', fontWeight: 600 }}>{Array.isArray(r.sales_outcome) ? r.sales_outcome.join(', ') : r.sales_outcome}</span>
-                          : <span style={{ color: 'var(--muted)' }}>—</span>}
+                <table>
+                  <thead>
+                    <tr>
+                      <th>#</th><th>Doctor</th><th>Hospital</th><th>Speciality</th>
+                      <th>Activity Type</th><th>Products</th><th>Amount (EUR)</th><th>Visits</th><th>MR</th><th>Sales Outcome</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {entries.map((r, i) => (
+                      <tr key={i}>
+                        <td style={{ color: 'var(--muted)' }}>{r.sn}</td>
+                        <td>{r.doctor}</td>
+                        <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.hospital}</td>
+                        <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.speciality}</td>
+                        <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.activity}</td>
+                        <td style={{ fontSize: '0.75rem' }}>{r.products}</td>
+                        <td style={{ fontFamily: 'var(--font-mono)' }}>{EUR(r.amount_eur)}</td>
+                        <td>{r.num_visits}</td>
+                        <td style={{ color: 'var(--muted)', fontSize: '0.75rem' }}>{r.responsible}</td>
+                        <td style={{ fontSize: '0.75rem' }}>
+                          {r.sales_outcome && r.sales_outcome !== '0' && r.sales_outcome !== 'nan'
+                            ? <span style={{ color: 'var(--green)', fontWeight: 600 }}>{Array.isArray(r.sales_outcome) ? r.sales_outcome.join(', ') : r.sales_outcome}</span>
+                            : <span style={{ color: 'var(--muted)' }}>—</span>}
+                        </td>
+                      </tr>
+                    ))}
+                    <tr className="tbl-footer-row">
+                      <td colSpan={6} style={{ textAlign: 'right', color: 'var(--muted)' }}>Total</td>
+                      <td style={{ fontFamily: 'var(--font-mono)' }}>{EUR(totalEUR)}</td>
+                      <td colSpan={2} />
+                      <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--green)', fontWeight: 600 }}>
+                        {totalOutcome ? totalOutcome.toLocaleString() : '—'}
                       </td>
                     </tr>
-                  ))}
-                  <tr className="tbl-footer-row">
-                    <td colSpan={6} style={{ textAlign: 'right', color: 'var(--muted)' }}>Total</td>
-                    <td style={{ fontFamily: 'var(--font-mono)' }}>{EUR(totalEUR)}</td>
-                    <td colSpan={2} />
-                    <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--green)', fontWeight: 600 }}>
-                      {totalOutcome ? totalOutcome.toLocaleString() : '—'}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-</div>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )
