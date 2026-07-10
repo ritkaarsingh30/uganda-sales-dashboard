@@ -164,9 +164,34 @@ export default function ActivitiesTab() {
   if (isLoading) return <div style={{ color: 'var(--muted)', padding: 40 }}>Loading activities...</div>
   if (!data) return null
 
-  const { overall, by_month } = data
+  const { by_month } = data
 
-  // Overall execution doughnut (cross-month)
+  // Overall figures scoped to the selected months
+  const overall = activeMonths.reduce((acc, m) => {
+    const mb = by_month?.[m]
+    if (!mb) return acc
+    const s = mb.summary
+    acc.total_planned += s.total_planned
+    acc.executed += s.executed
+    acc.not_executed += s.not_executed
+    acc.unplanned += s.unplanned
+    acc.planned_budget_eur += s.planned_budget_eur
+    acc.actual_spent_eur += s.actual_spent_eur
+    acc.total_outcome_eur += s.total_outcome_eur
+    acc.with_outcome += s.with_outcome
+    acc.without_outcome += s.without_outcome
+    acc.total_visits += (mb.matched || []).reduce((a, r) => a + (r.num_visits || 0), 0)
+                      + (mb.unplanned_done || []).reduce((a, r) => a + (r.num_visits || 0), 0)
+    return acc
+  }, {
+    total_planned: 0, executed: 0, not_executed: 0, unplanned: 0, planned_budget_eur: 0,
+    actual_spent_eur: 0, total_outcome_eur: 0, with_outcome: 0, without_outcome: 0, total_visits: 0,
+  })
+  overall.execution_rate_pct = overall.total_planned ? (overall.executed / overall.total_planned) * 100 : 0
+  overall.cost_per_visit_eur = overall.total_visits ? overall.actual_spent_eur / overall.total_visits : null
+  overall.cost_per_outcome_eur = overall.with_outcome ? overall.actual_spent_eur / overall.with_outcome : null
+
+  // Overall execution doughnut (across selected months)
   const overallDoughnut = {
     labels: ['Executed', 'Not Executed', 'Unplanned'],
     datasets: [{

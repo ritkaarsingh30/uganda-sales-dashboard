@@ -15,6 +15,35 @@ const EUR = n => n != null ? '€' + Math.round(n).toLocaleString() : '—'
 const pct = n => n != null ? n.toFixed(1) + '%' : '—'
 const num = n => n != null ? n.toLocaleString() : '—'
 
+// Recompute a delegate's Q1-equivalent totals scoped to the selected months
+// (mirrors the backend's own aggregation in delegates.py)
+function filteredQ1(d, activeMonths) {
+  const q = {
+    calls: 0, prescriber: 0, pharmacy: 0, drs_converted: 0,
+    days_worked: 0, days_target: 0, orders_eur: 0, ctc_eur: 0,
+    tour_planned: 0, tour_covered: 0,
+  }
+  for (const m of activeMonths) {
+    const mm = d.months?.[m]
+    if (!mm) continue
+    q.calls += mm.calls || 0
+    q.prescriber += mm.prescriber || 0
+    q.pharmacy += mm.pharmacy || 0
+    q.drs_converted += mm.drs_converted || 0
+    q.days_worked += mm.days_worked || 0
+    q.days_target += mm.days_target || 0
+    q.orders_eur += mm.orders_eur || 0
+    q.ctc_eur += mm.ctc_eur || 0
+    q.tour_planned += mm.tour_planned || 0
+    q.tour_covered += mm.tour_covered || 0
+  }
+  q.ctc_ratio = q.orders_eur ? q.ctc_eur / q.orders_eur : null
+  q.days_utilization = q.days_target ? q.days_worked / q.days_target : null
+  q.tour_coverage_pct = q.tour_planned ? (q.tour_covered / q.tour_planned) * 100 : null
+  q.conversion_pct = q.prescriber ? (q.drs_converted / q.prescriber) * 100 : null
+  return q
+}
+
 // ── Per-delegate card ─────────────────────────────────────────────────────────
 function DelegateCard({ d, activeMonths }) {
   const monthKeys = Object.keys(d.months || {}).filter(m => activeMonths.includes(m))
@@ -297,11 +326,22 @@ export default function DelegatesTab() {
   if (isLoading) return <div style={{ color: 'var(--muted)', padding: 40 }}>Loading delegates...</div>
   if (!data) return null
 
-  const { q1_summary, delegates } = data
+  const { delegates } = data
 
   const filteredDels = (delegates || [])
     .filter(d => activeMonths.some(m => d.months?.[m]))
+    .map(d => ({ ...d, q1: filteredQ1(d, activeMonths) }))
     .sort((a, b) => (b.q1?.orders_eur || 0) - (a.q1?.orders_eur || 0))
+
+  const filteredSummary = filteredDels.reduce((acc, d) => {
+    acc.total_calls += d.q1?.calls || 0
+    acc.total_orders_eur += d.q1?.orders_eur || 0
+    acc.total_ctc_eur += d.q1?.ctc_eur || 0
+    return acc
+  }, { total_calls: 0, total_orders_eur: 0, total_ctc_eur: 0 })
+  filteredSummary.overall_ctc_ratio = filteredSummary.total_orders_eur
+    ? filteredSummary.total_ctc_eur / filteredSummary.total_orders_eur
+    : null
 
   // Cross-delegate bar charts
   const tourBar = {
@@ -406,10 +446,10 @@ export default function DelegatesTab() {
     <div>
       {/* KPIs */}
       <div className="kpi">
-        <KpiCard label="Total Calls" value={(q1_summary?.total_calls || 0).toLocaleString()} />
-        <KpiCard label="Total Orders" value={EUR(q1_summary?.total_orders_eur)} />
-        <KpiCard label="Total CTC" value={EUR(q1_summary?.total_ctc_eur)} />
-        <KpiCard label="CTC Ratio" value={q1_summary?.overall_ctc_ratio != null ? (q1_summary.overall_ctc_ratio * 100).toFixed(1) + '%' : '—'} />
+        <KpiCard label="Total Calls" value={filteredSummary.total_calls.toLocaleString()} />
+        <KpiCard label="Total Orders" value={EUR(filteredSummary.total_orders_eur)} />
+        <KpiCard label="Total CTC" value={EUR(filteredSummary.total_ctc_eur)} />
+        <KpiCard label="CTC Ratio" value={filteredSummary.overall_ctc_ratio != null ? (filteredSummary.overall_ctc_ratio * 100).toFixed(1) + '%' : '—'} />
         <KpiCard label="Active MRs" value={filteredDels.length} />
       </div>
 

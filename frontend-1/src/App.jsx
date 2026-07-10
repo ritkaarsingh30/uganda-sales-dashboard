@@ -13,7 +13,7 @@ import ExpensesTab    from './tabs/ExpensesTab.jsx'
 import ActivitiesTab  from './tabs/ActivitiesTab.jsx'
 import NomenclatureTab from './tabs/NomenclatureTab.jsx'
 
-const AGGREGATE_TABS = new Set(['ov', 'prod', 'del', 'exp', 'act', 'nom'])
+const AGGREGATE_TABS = new Set(['ov', 'prod', 'del', 'exp', 'act'])
 
 const TITLES = {
   ov:   { title: 'Overview',   sub: 'Sales performance across all loaded months' },

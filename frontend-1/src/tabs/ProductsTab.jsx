@@ -18,6 +18,9 @@ export default function ProductsTab() {
   const { q1_kpis, q1_trend, annual_vs_q1 } = data
   const kpis = q1_kpis || {}
 
+  const filteredTotalSales = activeMonths.reduce((a, m) => a + (kpis.month_sales?.[m] || 0), 0)
+  const filteredTotalUnits = activeMonths.reduce((a, m) => a + (kpis.month_units?.[m] || 0), 0)
+
   // All products with a total > 0 across active months, sorted desc by total
   const allProducts = (q1_trend || [])
     .map(p => ({ ...p, total: activeMonths.reduce((a, m) => a + (p[m] || 0), 0) }))
@@ -133,8 +136,8 @@ export default function ProductsTab() {
     <div>
       {/* KPI row */}
       <div className="kpi">
-        <KpiCard label="Total Sales (EUR)" value={'€' + Math.round(kpis.total_sales_eur || 0).toLocaleString()} />
-        <KpiCard label="Total Units"       value={(kpis.total_units || 0).toLocaleString()} />
+        <KpiCard label="Total Sales (EUR)" value={'€' + Math.round(filteredTotalSales).toLocaleString()} />
+        <KpiCard label="Total Units"       value={filteredTotalUnits.toLocaleString()} />
         {activeMonths.map(m => (
           <KpiCard
             key={m}

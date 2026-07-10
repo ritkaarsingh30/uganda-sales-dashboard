@@ -522,19 +522,23 @@ def load_expense(file_bytes: bytes) -> dict:
                     hdr_row_oe = i
                     break
 
-            hdr_oe  = _parse_header(raw_oe.iloc[hdr_row_oe])
+            hdr_oe      = _parse_header(raw_oe.iloc[hdr_row_oe])
+            det_idx     = col(hdr_oe, "details", "description")
+            amt_ugx_idx = col(hdr_oe, "amount (ugx)", "amount(ugx)")
+            amt_usd_idx = col(hdr_oe, "amount (usd)", "amount(usd)")
+            if amt_ugx_idx is None and amt_usd_idx is None:
+                amt_ugx_idx = col(hdr_oe, "amount")
+            cmt_idx = col(hdr_oe, "comments", "notes", "remarks")
+            cat_idx = col(hdr_oe, "category")
+            cty_idx = col(hdr_oe, "country")
+            sno_idx = col(hdr_oe, "s.no", "s no", "sno", "no")
+
             oe_rows = []
             for _, row in raw_oe.iloc[hdr_row_oe + 1:].iterrows():
-                det_idx = col(hdr_oe, "details", "description")
-                amt_idx = col(hdr_oe, "amount (ugx)", "amount(ugx)", "amount (usd)", "amount")
-                cmt_idx = col(hdr_oe, "comments", "notes", "remarks")
-                cat_idx = col(hdr_oe, "category")
-                cty_idx = col(hdr_oe, "country")
-                sno_idx = col(hdr_oe, "s.no", "s no", "sno", "no")
-
                 det_raw = row.iloc[det_idx] if det_idx is not None else None
-                amt_raw = row.iloc[amt_idx] if amt_idx is not None else None
-                if pd.isna(det_raw) and pd.isna(amt_raw):
+                ugx_raw = row.iloc[amt_ugx_idx] if amt_ugx_idx is not None else None
+                usd_raw = row.iloc[amt_usd_idx] if amt_usd_idx is not None else None
+                if pd.isna(det_raw) and pd.isna(ugx_raw) and pd.isna(usd_raw):
                     continue
 
                 try:
@@ -542,13 +546,17 @@ def load_expense(file_bytes: bytes) -> dict:
                 except (ValueError, TypeError):
                     sn = 0
 
-                amt_usd = safe_num(amt_raw)
+                usd_amt = safe_num(usd_raw)
+                ugx_amt = safe_num(ugx_raw)
+                # Amount (USD) is the reliably populated column in this sheet;
+                # fall back to Amount (UGX) only when USD is absent.
+                amt_eur = usd_to_eur(usd_amt) if usd_amt else ugx_to_eur(ugx_amt)
                 oe_rows.append({
                     "SN":         sn,
                     "Country":    str(row.iloc[cty_idx]).strip() if cty_idx is not None and pd.notna(row.iloc[cty_idx]) else "",
                     "Details":    str(det_raw).strip() if pd.notna(det_raw) else "",
-                    "Amount_UGX": amt_usd * UGX_TO_EUR,
-                    "Amount_EUR": amt_usd,
+                    "Amount_UGX": amt_eur * UGX_TO_EUR,
+                    "Amount_EUR": amt_eur,
                     "Comments":   str(row.iloc[cmt_idx]).strip() if cmt_idx is not None and pd.notna(row.iloc[cmt_idx]) else "",
                     "Category":   str(row.iloc[cat_idx]).strip().upper() if cat_idx is not None and pd.notna(row.iloc[cat_idx]) else "",
                 })

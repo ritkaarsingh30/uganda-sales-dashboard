@@ -256,6 +256,7 @@ async def get_activities():
     for month_key, mdata in data.items():
         plan_df   = mdata.get("projection", {}).get("activity_plan")
         actual_df = mdata.get("expense", {}).get("activity_exp")
+        other_df  = mdata.get("expense", {}).get("other_exp")
         matched, planned_not_done, unplanned = _match_activities(plan_df, actual_df)
 
         total_planned    = len(matched) + len(planned_not_done)
@@ -263,8 +264,10 @@ async def get_activities():
         outcome_eur      = sum(r.get("sales_outcome_eur", 0) for r in matched)
         planned_budget   = sum(r.get("planned_ugx", 0) for r in matched) + sum(r.get("planned_ugx", 0) for r in planned_not_done)
         planned_budget_e = sum(r.get("planned_eur", 0) for r in matched) + sum(r.get("planned_eur", 0) for r in planned_not_done)
-        actual_spent     = sum(r.get("actual_ugx", 0) for r in matched) + sum(r.get("actual_ugx", 0) for r in unplanned)
-        actual_spent_eur = sum(r.get("actual_eur", 0) for r in matched) + sum(r.get("actual_eur", 0) for r in unplanned)
+        other_spent      = safe_num(other_df["Amount_UGX"].sum()) if other_df is not None and not other_df.empty and "Amount_UGX" in other_df.columns else 0.0
+        other_spent_eur  = safe_num(other_df["Amount_EUR"].sum()) if other_df is not None and not other_df.empty and "Amount_EUR" in other_df.columns else 0.0
+        actual_spent     = sum(r.get("actual_ugx", 0) for r in matched) + sum(r.get("actual_ugx", 0) for r in unplanned) + other_spent
+        actual_spent_eur = sum(r.get("actual_eur", 0) for r in matched) + sum(r.get("actual_eur", 0) for r in unplanned) + other_spent_eur
         with_outcome     = sum(1 for r in matched if r.get("has_outcome"))
         total_visits     = sum(r.get("num_visits", 0) for r in matched) + sum(r.get("num_visits", 0) for r in unplanned)
 

@@ -1,11 +1,18 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useRef } from 'react'
 
 const FilterContext = createContext(null)
 
 export function FilterProvider({ children, availableMonths }) {
   const [selectedMonths, setSelectedMonths] = useState(null)
+  const prevKeyRef = useRef(availableMonths.join(','))
 
-  useEffect(() => { setSelectedMonths(null) }, [availableMonths])
+  useEffect(() => {
+    const key = availableMonths.join(',')
+    if (key !== prevKeyRef.current) {
+      prevKeyRef.current = key
+      setSelectedMonths(null)
+    }
+  }, [availableMonths])
 
   const activeMonths = selectedMonths === null
     ? availableMonths
@@ -14,7 +21,11 @@ export function FilterProvider({ children, availableMonths }) {
   function toggleMonth(month) {
     setSelectedMonths(prev => {
       const next = new Set(prev || availableMonths)
-      next.has(month) ? next.delete(month) : next.add(month)
+      if (next.has(month)) {
+        next.delete(month)
+      } else {
+        next.add(month)
+      }
       if (next.size === 0 || next.size === availableMonths.length) return null
       return next
     })

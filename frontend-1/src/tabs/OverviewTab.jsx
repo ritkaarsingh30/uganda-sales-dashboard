@@ -50,6 +50,29 @@ export default function OverviewTab() {
     .map(p => ({ ...p, total: activeMonths.reduce((a, m) => a + (p[m] || 0), 0) }))
     .sort((a, b) => b.total - a.total)
 
+  // KPI figures scoped to the selected months
+  const sortedActive = [...activeMonths].sort(
+    (a, b) => (MONTH_CONFIG[a]?.monthNum || 0) - (MONTH_CONFIG[b]?.monthNum || 0)
+  )
+  const filteredSales  = sortedActive.reduce((a, m) => a + (s.month_sales?.[m] || 0), 0)
+  const filteredVisits = sortedActive.reduce((a, m) => a + (s.total_visits?.[m] || 0), 0)
+  const filteredDrs    = sortedActive.reduce((a, m) => a + (s.drs_converted?.[m] || 0), 0)
+  const achievementPct = s.annual_target_eur ? (filteredSales / s.annual_target_eur) * 100 : 0
+  const topProduct     = allProdsSorted[0]
+
+  let filteredMomEur = null, filteredMomPct = null, filteredMomVisitsPct = null
+  if (sortedActive.length >= 2) {
+    const prevM = sortedActive[sortedActive.length - 2]
+    const latestM = sortedActive[sortedActive.length - 1]
+    const prevSales = s.month_sales?.[prevM] || 0
+    const latestSales = s.month_sales?.[latestM] || 0
+    filteredMomEur = latestSales - prevSales
+    filteredMomPct = prevSales ? ((latestSales - prevSales) / prevSales) * 100 : null
+    const prevVisits = s.total_visits?.[prevM] || 0
+    const latestVisits = s.total_visits?.[latestM] || 0
+    filteredMomVisitsPct = prevVisits ? ((latestVisits - prevVisits) / prevVisits) * 100 : null
+  }
+
   const trendData = {
     labels: allProdsSorted.map(p => p.product),
     datasets: activeMonths.map((m, i) => ({
@@ -66,39 +89,36 @@ export default function OverviewTab() {
     })),
   }
 
-  const momPct  = s.mom_sales_change_pct
-  const momEur  = s.mom_sales_change_eur
-
   return (
     <div>
       <div className="kpi">
         <KpiCard
           label="Total Sales"
-          value={fmt(s.total_sales_eur)}
-          sub={`${visibleMonths.length} month(s)`}
-          change={momPct != null ? momPct.toFixed(1) + '%' : null}
-          changeDir={momPct != null ? (momPct >= 0 ? 'up' : 'dn') : null}
+          value={fmt(filteredSales)}
+          sub={`${sortedActive.length} month(s)`}
+          change={filteredMomPct != null ? filteredMomPct.toFixed(1) + '%' : null}
+          changeDir={filteredMomPct != null ? (filteredMomPct >= 0 ? 'up' : 'dn') : null}
         />
         <KpiCard label="Annual Target" value={fmt(s.annual_target_eur)} />
-        <KpiCard label="Achievement" value={fmtPct(s.annual_achievement_pct)} sub="vs period target" />
-        {momEur != null && (
+        <KpiCard label="Achievement" value={fmtPct(achievementPct)} sub="vs full-year target" />
+        {filteredMomEur != null && (
           <KpiCard
             label="MoM Growth"
-            value={(momEur >= 0 ? '+' : '') + fmt(momEur)}
-            sub="latest vs prev month"
-            change={momPct != null ? momPct.toFixed(1) + '%' : null}
-            changeDir={momPct != null ? (momPct >= 0 ? 'up' : 'dn') : null}
+            value={(filteredMomEur >= 0 ? '+' : '') + fmt(filteredMomEur)}
+            sub="latest vs prev selected month"
+            change={filteredMomPct != null ? filteredMomPct.toFixed(1) + '%' : null}
+            changeDir={filteredMomPct != null ? (filteredMomPct >= 0 ? 'up' : 'dn') : null}
           />
         )}
         <KpiCard
           label="Total Visits"
-          value={s.total_visits_all?.toLocaleString()}
-          sub={`across ${visibleMonths.length} month(s)`}
-          change={s.mom_visits_change_pct != null ? s.mom_visits_change_pct.toFixed(1) + '%' : null}
-          changeDir={s.mom_visits_change_pct != null ? (s.mom_visits_change_pct >= 0 ? 'up' : 'dn') : null}
+          value={filteredVisits.toLocaleString()}
+          sub={`across ${sortedActive.length} month(s)`}
+          change={filteredMomVisitsPct != null ? filteredMomVisitsPct.toFixed(1) + '%' : null}
+          changeDir={filteredMomVisitsPct != null ? (filteredMomVisitsPct >= 0 ? 'up' : 'dn') : null}
         />
-        <KpiCard label="DRs Converted" value={s.drs_converted_all?.toLocaleString()} sub={`across ${visibleMonths.length} month(s)`} />
-        <KpiCard label="Top Product" value={s.top_product_all} sub={fmt(s.top_product_all_val)} />
+        <KpiCard label="DRs Converted" value={filteredDrs.toLocaleString()} sub={`across ${sortedActive.length} month(s)`} />
+        <KpiCard label="Top Product" value={topProduct?.product} sub={fmt(topProduct?.total)} />
       </div>
 
       <ChartCard title="Sales vs Target by Month" height="h300">
